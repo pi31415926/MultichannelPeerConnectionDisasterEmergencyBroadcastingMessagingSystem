@@ -11,7 +11,7 @@ public class SendingSOSMessageActivity extends SignalingActivity {
         String fileName = generateSOSMessage();
         setContentView(R.layout.message_generated);
         TextView textView = findViewById(R.id.textView);
-        textView.setText(fileName + " built");
+        textView.setText("SOSMessage " + fileName + " built");
         tryToSendData();
     }
 

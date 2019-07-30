@@ -10,7 +10,7 @@ public class SendingUpdateMessageActivity extends SignalingActivity {
         String fileName = generateUpdateMessage();
         setContentView(R.layout.message_generated);
         TextView textView = findViewById(R.id.textView);
-        textView.setText(fileName + " built");
+        textView.setText("UpdateMessage " + fileName + " built");
         tryToSendData();
     }
 

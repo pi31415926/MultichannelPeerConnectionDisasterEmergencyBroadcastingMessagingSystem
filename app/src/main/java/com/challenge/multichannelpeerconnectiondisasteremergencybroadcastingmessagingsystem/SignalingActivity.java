@@ -11,13 +11,26 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonObject;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -126,13 +139,76 @@ public class SignalingActivity extends AppCompatActivity {
 
     public void tryToSendData(){
 
-        //TODO: add try to send data to server
+        sendDataViaInternet();
+
         Intent dataTransferViaDirectWiFiIntent = new Intent(getApplicationContext(), DataTransferViaWiFiDirectWiFi.class);
         dataTransferViaDirectWiFiIntent.putExtra("filesToBeSent", filesToBeSent);
         startActivity(dataTransferViaDirectWiFiIntent);
     }
 
 
+    public void sendDataViaInternet(){
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url ="http://www.disastercommandcenter.com";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("info", "requestSucceeded");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("warn", "requestFailed");
+                    }
+                }){
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+
+                ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+                File directory = contextWrapper.getDir(getFilesDir().getName(), Context.MODE_PRIVATE);
+                File filePathAndName = new File(directory, filesToBeSent.get(0));
+                StringBuffer stringBuffer = new StringBuffer();
+                String currentLine;
+                try (FileReader f = new FileReader(filePathAndName);
+                     BufferedReader bufferedReader = new BufferedReader(f)) {
+                    while((currentLine = bufferedReader.readLine()) != null){
+                        stringBuffer.append(currentLine);
+                    }
+
+
+                }catch (IOException e) {
+                    System.out.println("No such file");
+                }
+
+                JsonObject requestBody = new JsonObject();
+                requestBody.addProperty("message", stringBuffer.toString());
+                try {
+                    return requestBody == null ? null : requestBody.toString().getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody.toString(), "utf-8");
+                    return null;
+                }
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                String responseString = "";
+                if (response != null) {
+                    responseString = String.valueOf(response.statusCode);
+                }
+                return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+            }
+        };
+        queue.add(stringRequest);
+    }
 
 
 
