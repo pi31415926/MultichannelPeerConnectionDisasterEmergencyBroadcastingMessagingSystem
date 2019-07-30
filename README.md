@@ -1,2 +1,0 @@
-# MultichannelPeerConnectionDisasterEmergencyBroadcastingMessagingSystem
-multichannel peer connection disaster emergency broadcasting messaging system
