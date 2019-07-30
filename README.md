@@ -9,7 +9,7 @@ During natural disasters, we might more need the help from the people nearby ins
 3.	Getting a situation analysis quicker and more accurate
 It is especially hard to do a relevant thing during disasters, statistic and analysis for calculating the amount of people effected and where they are so that we can allocate the needed resources like fresh water or tends more efficient. I am working on integrating this function into the peer connection messaging system to make it more useful.
 
-Here, I have three ways to implement the peer connection messaging system between smart devices. 
+Here, I have planned three ways to implement the peer connection messaging system between smart devices. 
 1.	Wi-Fi Direct
 This is a common technology on the smart phones nowadays, which allows people send messages directly from device to device via Wi-Fi. People can easily get a phone with this function and help to forward or send messages to the people nearby.
 2.	Light-Fi Morse code communication with flash light plus camera and Sound-Fi Morse code communication with vibration and microphone
